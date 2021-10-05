@@ -19,7 +19,30 @@ public class ViewController {
         this.theCourseController = courseController;
 
         theView.addSearchButtonListener(new SearchButtonListener());
+        theView.addLoginButtonListener(new LoginButtonListener());
 
+    }
+
+    class LoginButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if(!theView.validateStudentId()){
+                return;
+            }
+
+            String name = theView.getStudetnName();
+            String id = theView.getStudentID();
+
+            if(theStudentListController.validateStudent(name, Integer.parseInt(id)) == null) {
+                theView.setOutputAreaText("That is not a student in our Database.");
+            }
+            else {
+                theStudentController.setCurrentStudent(theStudentListController.validateStudent(name, Integer.parseInt(id)));
+                theView.updateLogin();
+            }
+        }
     }
 
     class SearchButtonListener implements ActionListener{
@@ -28,7 +51,7 @@ public class ViewController {
         public void actionPerformed(ActionEvent e) {
 
             // exit if inputs are invalid
-            if(!theView.validateInputs()){
+            if(!theView.validateSectionNumber()){
                 return;
             }
 
@@ -41,6 +64,7 @@ public class ViewController {
             String outputString = "";
 
             //find the student using getStudent() method
+            outputString = "Hello " + theStudentController.getCurrentStudent() + "\n";
 
             // talk to back end using this input...
             // and get a string back to output to the user
@@ -52,30 +76,12 @@ public class ViewController {
 
                 // add a course
                 case 2:
-                    if(theStudentListController.validateStudent(name, Integer.parseInt(id)) == null) {
-                        outputString = "That is not a valid student in our database.";
-                        break;
-                    }
-                    else {
-                        theStudentController.setCurrentStudent(theStudentListController.validateStudent(name, Integer.parseInt(id)));
-                        outputString = "Hello " + theStudentController.getCurrentStudent() + "\n";
-                    }
-
                     outputString += theStudentController.addCourse(theCourseController.searchForCourse(courseName, courseNum),
                                                                     courseName, courseNum, Integer.parseInt(secNum));
                     break;
 
                 // Remove a course
                 case 3:
-                    if(theStudentListController.validateStudent(name, Integer.parseInt(id)) == null) {
-                        outputString = "That is not a valid student in our database.";
-                        break;
-                    }
-                    else {
-                        theStudentController.setCurrentStudent(theStudentListController.validateStudent(name, Integer.parseInt(id)));
-                        outputString = "Hello " + theStudentController.getCurrentStudent() + "\n";
-                    }
-
                     outputString += theStudentController.removeCourse(courseName, courseNum, Integer.parseInt(secNum));
                     break;
 
@@ -86,14 +92,6 @@ public class ViewController {
 
                 // View all courses take by student
                 case 5:
-                    if(theStudentListController.validateStudent(name, Integer.parseInt(id)) == null) {
-                        outputString = "That is not a valid student in our database.";
-                        break;
-                    }
-                    else {
-                        theStudentController.setCurrentStudent(theStudentListController.validateStudent(name, Integer.parseInt(id)));
-                        outputString = "Hello " + theStudentController.getCurrentStudent() + "\n";
-                    }
                     outputString += "Your Registered Courses: \n\n";
                     outputString += theStudentController.getStudentCourses();
                     break;

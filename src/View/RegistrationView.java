@@ -19,29 +19,23 @@ public class RegistrationView extends JFrame{
     private JTextField tfCourseNum;
     private JTextField tfSecNum;
     private JScrollPane outputScrollPane;
+    private JButton loginButton;
+    private boolean loggedIn;
 
     public RegistrationView(){
 
-        String[] studentOptions = {
-                "1. Search catalogue courses",
-                "2. Add course to student courses",
-                "3. Remove course from student courses",
-                "4. View All courses in catalogue",
-                "5. View all courses taken by student"};
-
-        optionList.setListData(studentOptions);
-        optionList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        optionList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        optionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         // add functionality to option list
-        formatOptionList();
+        //formatOptionList();
+
+        //authenticate student
+        authenticateStudent();
 
         // add functionality to clear and close button
         formatClearCloseButtons();
 
         // disable search button till selection is made.
-        searchButton.setEnabled(false);
+
 
         setContentPane(mainPanel);
         setTitle("Student Menu");
@@ -51,25 +45,22 @@ public class RegistrationView extends JFrame{
 
     }
 
-    public boolean validateInputs(){
-
-        // validate StudentID and secNumber
+    public boolean validateStudentId(){
         String studentID = tfStudentID.getText();
+        var IdLength =  studentID.length();
+        if(IdLength != 4 || !isInteger(studentID)){
+            outputArea.setText("Error: Student ID Must be a 4 digit integer");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateSectionNumber(){
+
+        // validate secNumber
         String secNum = tfSecNum.getText();
 
-        // validate ID is 4 digits
-        var IDLength =  studentID.length();
-        if(IDLength!=4 && tfStudentID.isEnabled()){
-            outputArea.setText("Error: Student ID Must be a 4 digit integer");
-            return false;
-        }
-
-
-        if(!isInteger(studentID) && tfStudentID.isEnabled()){
-            outputArea.setText("Error: Student ID Must be a 4 digit integer");
-            return false;
-        }
-        else if(tfSecNum.isEnabled() && !isInteger(secNum)) {
+        if(tfSecNum.isEnabled() && !isInteger(secNum)) {
             outputArea.setText("Error: Section Number must be an integer");
             return false;
         }
@@ -118,15 +109,60 @@ public class RegistrationView extends JFrame{
         searchButton.addActionListener(listenerForSearchButton);
     }
 
+    public void addLoginButtonListener(ActionListener listenerForLoginButton) {
+        loginButton.addActionListener(listenerForLoginButton);
+    }
+
+    private void authenticateStudent(){
+        if(!loggedIn){
+
+            String[] studentOptions = {
+                    " ",
+                    " ",
+                    " ",
+                    " ",
+                    " "};
+
+            optionList.setListData(studentOptions);
+
+            tfStudentID.setEnabled(true);
+            tfStudentName.setEnabled(true);
+            searchButton.setEnabled(false);
+            tfCourseName.setEnabled(false);
+            tfCourseNum.setEnabled(false);
+            tfSecNum.setEnabled(false);
+            setOutputAreaText("Please login with your first name and student ID.");
+            loginButton.setText("Login");
+        }
+        else{
+            loginButton.setText("Logout");
+            tfStudentID.setEnabled(false);
+            tfStudentName.setEnabled(false);
+            formatOptionList();
+        }
+    }
+
     private void formatOptionList(){
+
+        String[] studentOptions = {
+                "1. Search catalogue courses",
+                "2. Add course to student courses",
+                "3. Remove course from student courses",
+                "4. View All courses in catalogue",
+                "5. View all courses taken by student"};
+
+        optionList.setListData(studentOptions);
+        optionList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        optionList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        optionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         tfCourseName.setEnabled(false);
         tfCourseName.setText("N/A");
         tfCourseNum.setEnabled(false);
         tfCourseNum.setText("N/A");
         tfSecNum.setEnabled(false);
         tfSecNum.setText("N/A");
-        tfStudentID.setEnabled(false);
-        tfStudentName.setEnabled(false);
+
         optionList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -138,8 +174,6 @@ public class RegistrationView extends JFrame{
                     searchButton.setEnabled(true);
                     switch (optionList.getSelectedIndex() + 1) {
                         case 1:
-                            tfStudentID.setEnabled(false);
-                            tfStudentName.setEnabled(false);
                             tfCourseName.setEnabled(true);
                             tfCourseName.setText("");
                             tfCourseNum.setEnabled(true);
@@ -149,8 +183,6 @@ public class RegistrationView extends JFrame{
                             break;
                         case 2:
                         case 3:
-                            tfStudentID.setEnabled(true);
-                            tfStudentName.setEnabled(true);
                             tfCourseName.setEnabled(true);
                             tfCourseName.setText("");
                             tfCourseNum.setEnabled(true);
@@ -169,8 +201,6 @@ public class RegistrationView extends JFrame{
                             tfStudentName.setEnabled(false);
                             break;
                         case 5:
-                            tfStudentID.setEnabled(true);
-                            tfStudentName.setEnabled(true);
                             tfCourseName.setEnabled(false);
                             tfCourseName.setText("N/A");
                             tfCourseNum.setEnabled(false);
@@ -215,4 +245,8 @@ public class RegistrationView extends JFrame{
         return optionList.getSelectedIndex();
     }
 
+    public void updateLogin() {
+        loggedIn = !loggedIn;
+        authenticateStudent();
+    }
 }
