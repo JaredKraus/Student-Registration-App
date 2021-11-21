@@ -1,6 +1,8 @@
 # StudentRegistrationApp
 
-The Student Registration App is a model of a app that students at a given school could use to register for classes. This app uses an MVC design pattern with a simple GUI. A student enters their name and student number which is varified by the app before they are allowed to register. Once they are authenticated, a student will find and select the course and offering section they would like to enroll in. 
+The Student Registration App is a model of an application that students at a given school could use to register for classes. This app uses an MVC design pattern with a simple GUI. A student enters their name and student number which is varified by the app before they are allowed to register. Once they are authenticated, a student will find and select the course and offering section they would like to enroll in. 
+
+![StudentRegistrationExample](./StudentRegistrationApp.gif)
 
 The app contains the following menu features:
 1. Search for a course
